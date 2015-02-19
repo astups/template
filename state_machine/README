@@ -1,0 +1,4 @@
+state_machine: Basic implementation of state machine
+
+The goal of the library is to provide a convenient way to create and use state
+machines.
