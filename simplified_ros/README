@@ -1,0 +1,7 @@
+simplified_ros: Package to provide a simplified version of ros
+
+The goal is to facilitate the manipulation of ros publisher/subscriber and
+service/client.
+
+So far only the publisher/subscriber part is handled.
+TODO: Provide the simplified service/client

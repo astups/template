@@ -1,0 +1,90 @@
+# Find the simplified_ros module (this file is meant to be copied in your project to help cmake to find simplified_ros)
+# Once found the following variables are set :
+#	simplified_ros_FOUND	True to specify that the module has been found
+#
+#	simplified_ros_INCLUDE_DIRS	Path(s) to the headers
+#
+#	simplified_ros_LIBRARIES	Link these to use simplified_ros
+
+# To help CMake in finding the simplified_ros module
+# one can set the following variables :
+# simplified_ros_DIR	Those variables can be either set using 'set' command of
+# or			CMake, or using '-D<var>=value' while calling CMake or 
+# simplified_ros_ROOT	finally they can be set as environment variables.
+# or			Those three variables are aliases, so just set one is enough.
+# simplified_rosROOT
+#
+# You can set any of them using one of the following methods :
+#	1) Set it as environnement varialbe (e.g. export)
+#	2) Give it as argument for cmake : cmake -DlibHATP_DIR="...."
+#	3) In a CMakeLists.txt, set a variable : set(libHATP_DIR ...)	
+
+#Varaibles to change if the module changes
+set(HEADER_FILES @template_headers@)
+set(INCLUDE_PATH_SUFFIXES include/astups include/astups/@PROJECT_NAME@ astups/@PROJECT_NAME@)
+set(CURRENT_PREFIX @CMAKE_INSTALL_PREFIX@)
+
+foreach(header ${HEADER_FILES})
+	find_path(${header}_PATH ${header} PATH_SUFFIXES ${INCLUDE_PATH_SUFFIXES}
+	HINTS ${CURRENT_PREFIX}
+	${simplified_ros_DIR} ${simplified_ros_ROOT} ${simplified_rosROOT}
+	$ENV{simplified_ros_DIR} $ENV{simplified_ros_ROOT} $ENV{simplified_rosROOT})
+	
+	if(${header}_PATH)
+		list(APPEND simplified_ros_INCLUDE_DIRS ${${header}_PATH})
+	else(${header}_PATH)
+		list(APPEND MISSING_HEADERS ${header})
+	endif(${header}_PATH)
+endforeach()
+
+if(simplified_ros_INCLUDE_DIRS)
+	list(REMOVE_DUPLICATES simplified_ros_INCLUDE_DIRS)
+endif(simplified_ros_INCLUDE_DIRS)
+
+if(MISSING_HEADERS)
+	unset(simplified_ros_INCLUDE_DIRS)
+endif(MISSING_HEADERS)
+
+if(simplified_ros_INCLUDE_DIRS)
+	set(simplified_ros_FOUND TRUE)
+else(simplified_ros_INCLUDE_DIRS)
+	if(NOT simplified_ros_FIND_QUIETLY)
+		if(NOT simplified_ros_INCLUDE_DIRS)
+			message(STATUS "Unable to find simplified_ros, the following header files are missing : ${MISSING_HEADERS}")
+		else(NOT simplified_ros_INCLUDE_DIRS)
+			message(STATUS "Header files found.")
+		endif(NOT simplified_ros_INCLUDE_DIRS)
+	endif(NOT simplified_ros_FIND_QUIETLY)
+endif(simplified_ros_INCLUDE_DIRS)
+
+if(simplified_ros_FOUND)
+	if(NOT simplified_ros_FIND_QUIETLY)
+		message(STATUS "Found components for simplified_ros")
+		message(STATUS "simplified_ros_INCLUDE_DIRS = ${simplified_ros_INCLUDE_DIRS}")
+	endif(NOT simplified_ros_FIND_QUIETLY)
+else(simplified_ros_FOUND)
+	if(simplified_ros_FIND_REQUIRED)
+		set(simplified_ros_DIR "" CACHE PATH "Paths where to additionally look for
+		simplified_ros (alias of simplified_ros_ROOT and simplified_rosROOT)")
+		set(simplified_ros_ROOT "" CACHE PATH "Paths where to additionally look for
+		simplified_ros (alias of simplified_ros_DIR and simplified_rosROOT)")
+		set(simplified_rosROOT "" CACHE PATH "Paths where to additionally look for
+		simplified_ros (alias of simplified_ros_DIR and simplified_ros_ROOT)")
+		if(NOT simplified_ros_FIND_QUIETLY)
+			message("\nCould not find simplified_ros!\n")
+			message("You can use any of the following variables to help CMake to find the header files and libraries :")
+			message("	simplified_ros_DIR or simplified_ros_ROOT or simplified_rosROOT")
+			message("You should use one and set it to the root path of your local simplified_ros install directory (if you installed it in a different folder than system root).")
+			message("To set one you can either :")
+			message("	- use 'set(simplified_ros_DIR ....)' command in the CMakeLists.txt (separator ' ')")
+			message("	- use '-Dsimplified_ros_DIR=....' as an option to Cmake (separator ';')")
+			message("	- set one as an environment variable (e.g. export in bash, with separator ';')\n")
+		endif(NOT simplified_ros_FIND_QUIETLY)
+		message(FATAL_ERROR "Could not find simplified_ros!")
+	endif(simplified_ros_FIND_REQUIRED)
+endif(simplified_ros_FOUND)
+
+mark_as_advanced (
+	simplified_ros_FOUND
+	simplified_ros_INCLUDE_DIRS
+)
