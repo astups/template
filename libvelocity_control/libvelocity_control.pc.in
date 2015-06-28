@@ -1,0 +1,8 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+includedir=${prefix}/include/astups/@PROJECT_NAME@
+
+Name: @PROJECT_NAME@
+Description: Library to handle low level control of up to two PWM on the Raspberry Pi B+
+Version: @APP_VERSION@
+Cflags: -I${includedir} 

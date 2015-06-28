@@ -1,0 +1,90 @@
+# Find the libvelocity_control module (this file is meant to be copied in your project to help cmake to find libvelocity_control)
+# Once found the following variables are set :
+#	libvelocity_control_FOUND	True to specify that the module has been found
+#
+#	libvelocity_control_INCLUDE_DIRS	Path(s) to the headers
+#
+#	libvelocity_control_LIBRARIES	Link these to use libvelocity_control
+
+# To help CMake in finding the libvelocity_control module
+# one can set the following variables :
+# libvelocity_control_DIR	Those variables can be either set using 'set' command of
+# or			CMake, or using '-D<var>=value' while calling CMake or 
+# libvelocity_control_ROOT	finally they can be set as environment variables.
+# or			Those three variables are aliases, so just set one is enough.
+# libvelocity_controlROOT
+#
+# You can set any of them using one of the following methods :
+#	1) Set it as environnement varialbe (e.g. export)
+#	2) Give it as argument for cmake : cmake -Dlibvelocity_control_DIR="...."
+#	3) In a CMakeLists.txt, set a variable : set(libvelocity_control_DIR ...)	
+
+#Varaibles to change if the module changes
+set(HEADER_FILES @libvelocity_control_headers@)
+set(INCLUDE_PATH_SUFFIXES include/astups include/astups/@PROJECT_NAME@ astups/@PROJECT_NAME@)
+set(CURRENT_PREFIX @CMAKE_INSTALL_PREFIX@)
+
+foreach(header ${HEADER_FILES})
+	find_path(${header}_PATH ${header} PATH_SUFFIXES ${INCLUDE_PATH_SUFFIXES}
+	HINTS ${CURRENT_PREFIX}
+	${libvelocity_control_DIR} ${libvelocity_control_ROOT} ${libvelocity_controlROOT}
+	$ENV{libvelocity_control_DIR} $ENV{libvelocity_control_ROOT} $ENV{libvelocity_controlROOT})
+	
+	if(${header}_PATH)
+		list(APPEND libvelocity_control_INCLUDE_DIRS ${${header}_PATH})
+		unset(${header}_PATH CACHE)
+	else(${header}_PATH)
+		list(APPEND MISSING_HEADERS ${header})
+	endif(${header}_PATH)
+endforeach()
+
+if(libvelocity_control_INCLUDE_DIRS)
+	list(REMOVE_DUPLICATES libvelocity_control_INCLUDE_DIRS)
+endif(libvelocity_control_INCLUDE_DIRS)
+
+if(MISSING_HEADERS)
+	unset(libvelocity_control_INCLUDE_DIRS)
+endif(MISSING_HEADERS)
+
+if(libvelocity_control_INCLUDE_DIRS)
+	set(libvelocity_control_FOUND TRUE)
+endif(libvelocity_control_INCLUDE_DIRS)
+if(NOT libvelocity_control_FIND_QUIETLY)
+	if(NOT libvelocity_control_INCLUDE_DIRS)
+		message(STATUS "Unable to find libvelocity_control, the following header files are missing : ${MISSING_HEADERS}")
+	else(NOT libvelocity_control_INCLUDE_DIRS)
+		message(STATUS "Header files found.")
+	endif(NOT libvelocity_control_INCLUDE_DIRS)
+endif(NOT libvelocity_control_FIND_QUIETLY)
+
+if(libvelocity_control_FOUND)
+	if(NOT libvelocity_control_FIND_QUIETLY)
+		message(STATUS "Found components for libvelocity_control")
+		message(STATUS "libvelocity_control_INCLUDE_DIRS = ${libvelocity_control_INCLUDE_DIRS}")
+	endif(NOT libvelocity_control_FIND_QUIETLY)
+else(libvelocity_control_FOUND)
+	if(libvelocity_control_FIND_REQUIRED)
+		set(libvelocity_control_DIR "" CACHE PATH "Paths where to additionally look for
+		libvelocity_control (alias of libvelocity_control_ROOT and libvelocity_controlROOT)")
+		set(libvelocity_control_ROOT "" CACHE PATH "Paths where to additionally look for
+		libvelocity_control (alias of libvelocity_control_DIR and libvelocity_controlROOT)")
+		set(libvelocity_controlROOT "" CACHE PATH "Paths where to additionally look for
+		libvelocity_control (alias of libvelocity_control_DIR and libvelocity_control_ROOT)")
+		if(NOT libvelocity_control_FIND_QUIETLY)
+			message("\nCould not find libvelocity_control!\n")
+			message("You can use any of the following variables to help CMake to find the header files and libraries :")
+			message("	libvelocity_control_DIR or libvelocity_control_ROOT or libvelocity_controlROOT")
+			message("You should use one and set it to the root path of your local libvelocity_control install directory (if you installed it in a different folder than system root).")
+			message("To set one you can either :")
+			message("	- use 'set(libvelocity_control_DIR ....)' command in the CMakeLists.txt (separator ' ')")
+			message("	- use '-Dlibvelocity_control_DIR=....' as an option to Cmake (separator ';')")
+			message("	- set one as an environment variable (e.g. export in bash, with separator ';')\n")
+		endif(NOT libvelocity_control_FIND_QUIETLY)
+		message(FATAL_ERROR "Could not find libvelocity_control!")
+	endif(libvelocity_control_FIND_REQUIRED)
+endif(libvelocity_control_FOUND)
+
+mark_as_advanced (
+	libvelocity_control_FOUND
+	libvelocity_control_INCLUDE_DIRS
+)
