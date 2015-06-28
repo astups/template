@@ -16,8 +16,8 @@
 #
 # You can set any of them using one of the following methods :
 #	1) Set it as environnement varialbe (e.g. export)
-#	2) Give it as argument for cmake : cmake -DlibHATP_DIR="...."
-#	3) In a CMakeLists.txt, set a variable : set(libHATP_DIR ...)	
+#	2) Give it as argument for cmake : cmake -Dsimplified_ros_DIR="...."
+#	3) In a CMakeLists.txt, set a variable : set(simplified_ros_DIR ...)	
 
 #Varaibles to change if the module changes
 set(HEADER_FILES @template_headers@)
@@ -32,6 +32,7 @@ foreach(header ${HEADER_FILES})
 	
 	if(${header}_PATH)
 		list(APPEND simplified_ros_INCLUDE_DIRS ${${header}_PATH})
+		unset(${header}_PATH CACHE)
 	else(${header}_PATH)
 		list(APPEND MISSING_HEADERS ${header})
 	endif(${header}_PATH)
