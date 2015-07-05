@@ -16,9 +16,8 @@
 #define PWM_HPP
 
 /** Defines the clock speed 19.2MHz.
- * \TODO See if it is possible to use CLOCK_BASE from wiringPi instead
  */
-#define BASE_CLOCK 19200000 //Hz <=> 19.2MHz
+static const unsigned long long int BASE_CLOCK=19200000; //Hz <=> 19.2MHz
 
 #include <cmath>
 #include <iostream>
@@ -48,7 +47,7 @@ class Pwm
 		unsigned long int _up_time;
 
 		/** The divisor represents the precision of the PWM */
-		static const double _divisor = 1024;
+		static const unsigned int _divisor = 1024;
 
 	public:
 		/** Constructs a PWM.
@@ -56,8 +55,9 @@ class Pwm
 		 * Warning: it does not set a default value.
 		 * @param period PWM period in us
 		 * @param pin Pin number to use (see PwmPin enum to know all possible values)
+		 * \TODO Throw runtime_error if the period is not applicable AND make all operations "size_safe" (can not put too big number in somthing too small)
 		 */
-		Pwm(unsigned long int period, PwmPin pin): _pin(pin), _period(period), _up_time(0)
+		Pwm(unsigned long long int period, PwmPin pin): _pin(pin), _period(period), _up_time(0)
 		{
 			if(wiringPiSetupGpio() == -1)
 			{
@@ -68,10 +68,12 @@ class Pwm
 			pwmSetMode(PWM_MODE_MS);
 
 			// Calculate divisor for the desired period
-			double freq = 1000000.0/(double)(_period);
+			// To obtain the desired frequence: D_f=(1/_period)*1000000 because the period is expressed in us
+			// The available frequency is: A_f=BASE_CLOCK/_divisor
+			// So to get the clock to give to wiringPi: C=A_f/D_f, which can be simplified as follow
+			pwmSetClock((BASE_CLOCK*(unsigned long long int)_period)/((unsigned long long int)1000000*(unsigned long long int)_divisor));
 
-			pwmSetClock(floor(BASE_CLOCK/(freq*_divisor)));
-			pwmSetRange((int)_divisor);
+			pwmSetRange(_divisor);
 		}
 
 		/** Set the up-time for the PWM.
@@ -80,7 +82,7 @@ class Pwm
 		 */
 		bool setUpTime(unsigned long int up_time) //us
 		{
-			if ( round((_divisor*up_time)/_period) > _divisor )
+			if ( (_divisor*up_time)/_period > _divisor )
 			{
 				return false;
 			}
@@ -103,7 +105,7 @@ class Pwm
 				return false;
 			}
 
-			_up_time = percent/100.0*_period;
+			_up_time = (unsigned long int)(round(percent*(double)_period)/100.0);
 
 			pwmWrite(_pin,(_divisor*_up_time)/_period);
 
@@ -133,7 +135,7 @@ class Pwm
 		 */
 		double getPercent() const
 		{
-			return _up_time/(double)(_period)*100.0;
+			return ((double)_up_time)/((double)(_period)*100.0);
 		}
 
 };

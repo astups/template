@@ -36,7 +36,7 @@ private:
 	/** The current angle command (not the actual angle, may be different if under constraints). */
 	double _current_angle;
 
-	/** Polarity of the angle, allow to change the direction of control without rewiring. */
+	/** Polarity of the angle, allow to change the direction of control without rewiring. (Default: false) */
 	bool _polarity;
 
 	/** Forbidden constructor. */

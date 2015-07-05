@@ -15,6 +15,8 @@
 #ifndef PWM_INTERFACE_HPP
 #define PWM_INTERFACE_HPP
 
+#include <limits>
+
 #include <pwm.hpp>
 
 /** Possible type of PWM control.
@@ -58,5 +60,25 @@ public:
 	/** Empty destructor. */
 	virtual ~PwmInterface() {};
 };
+
+/** Allow to properlly compare two float numbers (float or double)
+ * @param a1 Number to compare
+ * @param a2 Number to compare
+ * @return True if equals
+ */
+template<typename T>
+static bool equal(const T& a1, const T& a2){
+	return fabs(a1 -a2) <= std::numeric_limits<T>::epsilon() * std::max((T)1.0f, (T)std::max(fabs(a1), fabs(a2)) );
+}
+
+/** Allow to properlly compare two float numbers (float or double)
+ * @param a1 Number to compare
+ * @param a2 Number to compare
+ * @return True if differents
+ */
+template<typename T>
+static bool different(const T& a1, const T& a2){
+	return (!equal(a1, a2));
+}
 
 #endif //PWM_INTERFACE_HPP
